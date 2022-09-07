@@ -7,12 +7,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="item-service" />
-        <module name="api-gateway" />
         <module name="eureka-service-registry" />
         <module name="customer-service" />
         <module name="sales-order-service" />
         <module name="kafka-service" />
+        <module name="item-service" />
+        <module name="api-gateway" />
+        <module name="order-lookup-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -21,6 +22,7 @@
       <module name="eureka-service-registry" target="17" />
       <module name="item-service" target="17" />
       <module name="kafka-service" target="17" />
+      <module name="order-lookup-service" target="17" />
       <module name="sales-order-service" target="17" />
     </bytecodeTargetLevel>
   </component>
@@ -31,6 +33,7 @@
       <module name="eureka-service-registry" options="-parameters" />
       <module name="item-service" options="-parameters" />
       <module name="kafka-service" options="-parameters" />
+      <module name="order-lookup-service" options="-parameters" />
       <module name="sales-order-service" options="-parameters" />
     </option>
   </component>
