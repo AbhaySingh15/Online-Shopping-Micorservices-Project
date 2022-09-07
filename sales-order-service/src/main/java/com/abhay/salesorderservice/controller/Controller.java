@@ -26,7 +26,7 @@ public class Controller {
     }
 
     @GetMapping("/orders/{orderId}")
-    public ResponseEntity<SalesOrderResponseModel> getOrderDetailsByOrderId(@Param("orderId") Long order_id){
-        return orderService.getOrderDetailsByOrderId(order_id);
+    public ResponseEntity<SalesOrderResponseModel> getOrderDetailsByOrderId(@PathVariable Long orderId){
+        return orderService.getOrderDetailsByOrderId(orderId);
     }
 }

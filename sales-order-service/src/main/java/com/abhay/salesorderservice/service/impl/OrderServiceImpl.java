@@ -8,6 +8,7 @@ import com.abhay.salesorderservice.repository.OrderRepository;
 import com.abhay.salesorderservice.repository.Order_line_Item_Repository;
 import com.abhay.salesorderservice.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.criterion.Order;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,16 +68,10 @@ public class OrderServiceImpl implements OrderService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
             orderRepository.save(salesOrder);
-            List<Order_Line_Item> order_line_items_list = new ArrayList<>();
-            for(Item item: itemArray){
-                // creating order_line_item object from item object and setting salesOrder
-                // object to it
-                Order_Line_Item order_line_item = createOrderLineItem(item,salesOrder);
-                order_line_items_list.add(order_line_item);
-            }
-            order_line_item_repository.saveAll(order_line_items_list);
+            List<Order_Line_Item> order_line_itemList = getOrderLineItemList(itemArray, salesOrder);
+            order_line_item_repository.saveAll(order_line_itemList);
             SalesOrderResponseModel salesOrderResponseModel = modelMapper.map(salesOrder, SalesOrderResponseModel.class);
-            salesOrderResponseModel.setOrder_line_items(order_line_items_list);
+            salesOrderResponseModel.setOrder_line_items(order_line_itemList);
             return ResponseEntity.ok(salesOrderResponseModel);
         }else{
             log.info("order cannot be placed as customer is not registered");
@@ -96,18 +91,22 @@ public class OrderServiceImpl implements OrderService {
         if(salesOrderEntity.isPresent()){
             SalesOrder salesOrder = salesOrderEntity.get();
             SalesOrderResponseModel salesOrderResponseModel = modelMapper.map(salesOrder,SalesOrderResponseModel.class);
+            salesOrderResponseModel.setOrder_line_items(order_line_item_repository.getOrder_Line_ItemsByOrderId(order_id));
             return ResponseEntity.ok(salesOrderResponseModel);
         }
         return ResponseEntity.badRequest().build();
     }
 
-    public Order_Line_Item createOrderLineItem(Item item,SalesOrder salesOrder){
-        Order_Line_Item order_line_item = new Order_Line_Item();
-        order_line_item.setName(item.getName());
-        order_line_item.setSalesOrder(salesOrder);
-        log.info(order_line_item.getName());
-        order_line_item_repository.save(order_line_item);
-        return order_line_item;
+    public List<Order_Line_Item> getOrderLineItemList(Item[] items, SalesOrder salesOrder){
+        List<Order_Line_Item> order_line_itemList = new ArrayList<>();
+        for(Item item: items) {
+            Order_Line_Item order_line_item = new Order_Line_Item();
+            order_line_item.setName(item.getName());
+            order_line_item.setSalesOrder(salesOrder);
+            log.info(order_line_item.getName());
+            order_line_itemList.add(order_line_item);
+        }
+        return order_line_itemList;
     }
 
     @PostConstruct
