@@ -1,6 +1,7 @@
 package com.abhay.salesorderservice.model;
 
 import com.abhay.salesorderservice.entity.Order_Line_Item;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

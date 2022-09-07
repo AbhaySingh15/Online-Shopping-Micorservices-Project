@@ -8,13 +8,17 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="item-service" />
+        <module name="api-gateway" />
+        <module name="eureka-service-registry" />
         <module name="customer-service" />
         <module name="sales-order-service" />
         <module name="kafka-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="api-gateway" target="17" />
       <module name="customer-service" target="17" />
+      <module name="eureka-service-registry" target="17" />
       <module name="item-service" target="17" />
       <module name="kafka-service" target="17" />
       <module name="sales-order-service" target="17" />
@@ -22,7 +26,9 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="api-gateway" options="-parameters" />
       <module name="customer-service" options="-parameters" />
+      <module name="eureka-service-registry" options="-parameters" />
       <module name="item-service" options="-parameters" />
       <module name="kafka-service" options="-parameters" />
       <module name="sales-order-service" options="-parameters" />

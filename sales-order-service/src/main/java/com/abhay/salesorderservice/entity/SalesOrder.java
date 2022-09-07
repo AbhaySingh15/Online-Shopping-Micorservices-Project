@@ -1,5 +1,6 @@
 package com.abhay.salesorderservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,11 +16,14 @@ public class SalesOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @JsonIgnore
     private Date order_date;
     private String order_desc;
+    @JsonIgnore
     private double total_price;
 
     @ManyToOne
+    @JsonIgnore
     private CustomerSOS customer_sos;
 
 }

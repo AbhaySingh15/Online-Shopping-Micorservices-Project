@@ -1,5 +1,6 @@
 package com.abhay.salesorderservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class Order_Line_Item {
     private int item_quantity;
 
     @ManyToOne
+    @JsonIgnore
     private SalesOrder salesOrder;
 
 }
