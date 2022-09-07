@@ -4,6 +4,7 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/api-gateway" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/eureka-service-registry" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/hystrix-dashboard" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/order-lookup-service" vcs="Git" />
   </component>
 </project>

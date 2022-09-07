@@ -4,12 +4,11 @@ import com.abhay.salesorderservice.model.SalesOrderRequestModel;
 import com.abhay.salesorderservice.model.SalesOrderResponseModel;
 import com.abhay.salesorderservice.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class Controller {
+public class SalesOrderController {
 
     @Autowired
     private OrderServiceImpl orderService;
@@ -21,8 +20,9 @@ public class Controller {
     }
 
     @GetMapping("/orders")
-    public ResponseEntity<SalesOrder> getAllOrdersOfACustomer(@RequestParam Long cust_id){
-        return orderService.getOrderDetailsByCustomerId(cust_id);
+    public ResponseEntity<SalesOrder> getAllOrdersOfACustomer(@RequestParam("customerId") Long cust_id){
+        ResponseEntity<SalesOrder> responseEntity= orderService.getOrderDetailsByCustomerId(cust_id);
+        return responseEntity;
     }
 
     @GetMapping("/orders/{orderId}")
