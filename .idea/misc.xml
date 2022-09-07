@@ -6,6 +6,7 @@
         <option value="$PROJECT_DIR$/Item-Service/pom.xml" />
         <option value="$PROJECT_DIR$/customer-service/pom.xml" />
         <option value="$PROJECT_DIR$/sales-order-service/pom.xml" />
+        <option value="$PROJECT_DIR$/kafka-service/pom.xml" />
       </list>
     </option>
   </component>

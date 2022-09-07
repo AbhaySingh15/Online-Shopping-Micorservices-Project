@@ -1,8 +1,7 @@
-package com.abhay.itemservice.entity;
+package com.abhay.salesorderservice.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
@@ -14,12 +13,13 @@ import javax.persistence.Id;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Item {
+public class CustomerSOS {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    private String name;
-    private String description;
-    private double price;
+    private Long cust_id;
+    private String cust_email;
+    private String cust_first_name;
+    private String cust_last_name;
+
 }

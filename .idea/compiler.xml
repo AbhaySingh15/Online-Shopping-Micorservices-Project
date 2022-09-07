@@ -10,11 +10,13 @@
         <module name="item-service" />
         <module name="customer-service" />
         <module name="sales-order-service" />
+        <module name="kafka-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="customer-service" target="17" />
       <module name="item-service" target="17" />
+      <module name="kafka-service" target="17" />
       <module name="sales-order-service" target="17" />
     </bytecodeTargetLevel>
   </component>
@@ -22,6 +24,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="customer-service" options="-parameters" />
       <module name="item-service" options="-parameters" />
+      <module name="kafka-service" options="-parameters" />
       <module name="sales-order-service" options="-parameters" />
     </option>
   </component>

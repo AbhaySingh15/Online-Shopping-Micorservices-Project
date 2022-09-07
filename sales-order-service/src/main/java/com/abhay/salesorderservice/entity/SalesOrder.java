@@ -1,18 +1,25 @@
 package com.abhay.salesorderservice.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-public class Order {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class SalesOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Date order_date;
-    private Long cust_id;
     private String order_desc;
     private double total_price;
+
+    @ManyToOne
+    private CustomerSOS customer_sos;
+
 }
