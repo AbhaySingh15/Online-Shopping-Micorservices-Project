@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: item-service
+
+  datasource:
+    password: password
+    username: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/item_service_db
+  jpa:
+    show-sql: 'true'
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+server:
+  port: '9001'
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: INFO

@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: customer-service
+  datasource:
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    url: jdbc:mysql://localhost:3306/customer_service_db
+  jpa:
+    show-sql: 'true'
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+logging:
+  level:
+    org:
+      hibernate:
+        type: TRACE
+        SQL: DEBUG

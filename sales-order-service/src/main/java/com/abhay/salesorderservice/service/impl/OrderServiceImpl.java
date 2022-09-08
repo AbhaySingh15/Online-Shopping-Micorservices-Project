@@ -8,7 +8,6 @@ import com.abhay.salesorderservice.repository.OrderRepository;
 import com.abhay.salesorderservice.repository.Order_line_Item_Repository;
 import com.abhay.salesorderservice.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.criterion.Order;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;

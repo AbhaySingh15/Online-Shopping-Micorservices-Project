@@ -7,10 +7,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="config-server" />
         <module name="eureka-service-registry" />
         <module name="customer-service" />
         <module name="sales-order-service" />
         <module name="kafka-service" />
+        <module name="hystrix-dashboard" />
         <module name="item-service" />
         <module name="api-gateway" />
         <module name="order-lookup-service" />
@@ -18,8 +20,10 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="api-gateway" target="17" />
+      <module name="config-server" target="17" />
       <module name="customer-service" target="17" />
       <module name="eureka-service-registry" target="17" />
+      <module name="hystrix-dashboard" target="17" />
       <module name="item-service" target="17" />
       <module name="kafka-service" target="17" />
       <module name="order-lookup-service" target="17" />
@@ -29,8 +33,10 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway" options="-parameters" />
+      <module name="config-server" options="-parameters" />
       <module name="customer-service" options="-parameters" />
       <module name="eureka-service-registry" options="-parameters" />
+      <module name="hystrix-dashboard" options="-parameters" />
       <module name="item-service" options="-parameters" />
       <module name="kafka-service" options="-parameters" />
       <module name="order-lookup-service" options="-parameters" />

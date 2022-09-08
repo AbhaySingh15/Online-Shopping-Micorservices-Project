@@ -1,0 +1,26 @@
+server:
+  port: 9191
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: itemService
+          uri: lb://item-service
+          predicates:
+            - Path= /item*/**
+        - id: customer-service
+          uri: lb://customer-service
+          predicates:
+            - Path= /customer*/**
+        - id: sales-order-service
+          uri: lb://sales-order-service
+          predicates:
+            - Path=/orders*/**
+        - id: order-lookup-service
+          uri: lb://order-lookup-service
+          predicates:
+            - Path=/order-lookup-service/**
+
