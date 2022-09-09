@@ -8,12 +8,14 @@ import com.abhay.salesorderservice.repository.OrderRepository;
 import com.abhay.salesorderservice.repository.Order_line_Item_Repository;
 import com.abhay.salesorderservice.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.ArrayUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -41,35 +43,38 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseEntity<SalesOrderResponseModel> createOrder(SalesOrderRequestModel orderRequestModel) {
         // getting cust_id from orderRequestModel object to check if customer is registered or not
-        Optional<CustomerSOS> customerSOS = customer_sos_repository.findById(orderRequestModel.getCust_id());
-        if(customerSOS.isPresent()){ // if customer is registered
-            // mapping salesOrder object from salesOrderRequestModel object
-            SalesOrder salesOrder = modelMapper.map(orderRequestModel, SalesOrder.class);
-            // setting customer id for the order object
-            salesOrder.setCustomer_sos(customerSOS.get());
-            log.info(salesOrder.toString());
+        Optional<CustomerSOS> customer = customer_sos_repository.findById(orderRequestModel.getCust_id());
+        // if customer is registered & item array is not null or empty
+        if(customer.isEmpty()) {
+            log.info("order cannot be placed as customer is not registered");
+        } else if(CollectionUtils.isEmpty(orderRequestModel.getItem_names())) {
+            log.info("To place order item names cannot be empty or null");
+        }else {
             // url to get the requested items from the item service
             StringBuilder getItemByNamesFromItemService = new StringBuilder("http://item-service/item?name=");
-            String listOfItemNames = String.join(",",orderRequestModel.getItem_names());
-            log.info(listOfItemNames);
-            getItemByNamesFromItemService.append(listOfItemNames);
+            String itemNamesRequestedByCustomer = String.join(",", orderRequestModel.getItem_names());
+            log.info(itemNamesRequestedByCustomer);
+            getItemByNamesFromItemService.append(itemNamesRequestedByCustomer);
             log.info(getItemByNamesFromItemService.toString());
             // getting the item array containing all items from item service
-            ResponseEntity<Item[]> responseEntity = restTemplate.getForEntity(getItemByNamesFromItemService.toString(),Item[].class);
+            ResponseEntity<Item[]> responseEntity = restTemplate.getForEntity(getItemByNamesFromItemService.toString(), Item[].class);
             Item[] itemArray = responseEntity.getBody();
             log.info(Arrays.toString(itemArray));
-            if(itemArray.length==0){
-                log.info("Order cannot be placed as there is no item available in the stock");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            if (ArrayUtils.isEmpty(itemArray)) {
+                log.info("order cannot be placed as not a single item requested by customer is in the stock");
+            } else {
+                // mapping salesOrder object from salesOrderRequestModel object
+                SalesOrder salesOrder = modelMapper.map(orderRequestModel, SalesOrder.class);
+                // setting customer id for the order object
+                salesOrder.setCustomer_sos(customer.get());
+                log.info(salesOrder.toString());
+                orderRepository.save(salesOrder);
+                List<Order_Line_Item> order_line_itemList = getOrderLineItemList(itemArray, salesOrder);
+                order_line_item_repository.saveAll(order_line_itemList);
+                SalesOrderResponseModel salesOrderResponseModel = modelMapper.map(salesOrder, SalesOrderResponseModel.class);
+                salesOrderResponseModel.setOrder_line_items(order_line_itemList);
+                return ResponseEntity.ok(salesOrderResponseModel);
             }
-            orderRepository.save(salesOrder);
-            List<Order_Line_Item> order_line_itemList = getOrderLineItemList(itemArray, salesOrder);
-            order_line_item_repository.saveAll(order_line_itemList);
-            SalesOrderResponseModel salesOrderResponseModel = modelMapper.map(salesOrder, SalesOrderResponseModel.class);
-            salesOrderResponseModel.setOrder_line_items(order_line_itemList);
-            return ResponseEntity.ok(salesOrderResponseModel);
-        }else{
-            log.info("order cannot be placed as customer is not registered");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
