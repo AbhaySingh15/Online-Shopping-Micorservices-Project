@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,22 +26,16 @@ public class OrderLookupController {
     private RestTemplate restTemplate;
 
     @GetMapping("/order-lookup-service/orders")
-    public ResponseEntity<SalesOrder> getOrderDetailsByCustomerId(@RequestParam("customerId") Long cust_id){
-        StringBuilder url= new StringBuilder("http://sales-order-service/orders?customerId=");
-        url.append(cust_id);
-        log.info(url.toString());
-        ResponseEntity<SalesOrder> responseEntity = restTemplate.getForEntity(url.toString(),SalesOrder.class);
-        System.out.println(responseEntity);
+    public ResponseEntity<SalesOrder[]> getOrderDetailsByCustomerId(@RequestParam("customerId") Long cust_id){
+        ResponseEntity<SalesOrder[]> responseEntity = restTemplate.getForEntity("http://sales-order-service/orders?customerId="+cust_id,SalesOrder[].class);
+        log.info(Arrays.toString(responseEntity.getBody()));
         return responseEntity;
     }
 
     @GetMapping("/order-lookup-service/orders/{orderId}")
     public ResponseEntity<SalesOrderResponseModel> getOrderDetailsByOrderId(@PathVariable Long orderId){
-        StringBuilder url= new StringBuilder("http://sales-order-service/orders/");
-        url.append(orderId);
-        log.info(url.toString());
-        ResponseEntity<SalesOrderResponseModel> responseEntity = restTemplate.getForEntity(url.toString(),SalesOrderResponseModel.class);
-        System.out.println(responseEntity);
+        ResponseEntity<SalesOrderResponseModel> responseEntity = restTemplate.getForEntity("http://sales-order-service/orders/"+orderId,SalesOrderResponseModel.class);
+        log.info(responseEntity.getBody().toString());
         return responseEntity;
     }
 }

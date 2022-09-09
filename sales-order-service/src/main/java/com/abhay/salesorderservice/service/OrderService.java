@@ -5,10 +5,12 @@ import com.abhay.salesorderservice.model.SalesOrderRequestModel;
 import com.abhay.salesorderservice.model.SalesOrderResponseModel;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public interface OrderService {
 
     ResponseEntity<SalesOrderResponseModel> createOrder(SalesOrderRequestModel orderRequestModel);
-    ResponseEntity<SalesOrder> getOrderDetailsByCustomerId(Long cust_id);
+    ResponseEntity<List<SalesOrder>> getOrderDetailsByCustomerId(Long cust_id);
     ResponseEntity<SalesOrderResponseModel> getOrderDetailsByOrderId(Long order_id);
 
 }

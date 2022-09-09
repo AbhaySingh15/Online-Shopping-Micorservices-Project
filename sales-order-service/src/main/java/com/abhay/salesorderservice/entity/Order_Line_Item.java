@@ -17,8 +17,8 @@ public class Order_Line_Item {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    @JsonIgnore
     private int item_quantity;
-
     @ManyToOne
     @JsonIgnore
     private SalesOrder salesOrder;

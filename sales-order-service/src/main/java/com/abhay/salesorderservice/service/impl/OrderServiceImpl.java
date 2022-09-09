@@ -28,16 +28,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private ModelMapper modelMapper;
-
     @Autowired
     private OrderRepository orderRepository;
-
     @Autowired
     private Order_line_Item_Repository order_line_item_repository;
-
     @Autowired
     private Customer_SOS_Repository customer_sos_repository;
-
     @Autowired
     private RestTemplate restTemplate;
 
@@ -79,8 +75,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<SalesOrder> getOrderDetailsByCustomerId(Long cust_id) {
-        SalesOrder salesOrder = orderRepository.findByCustomerId(cust_id);
+    public ResponseEntity<List<SalesOrder>> getOrderDetailsByCustomerId(Long cust_id) {
+        List<SalesOrder> salesOrder = orderRepository.findByCustomerId(cust_id);
         return ResponseEntity.ok(salesOrder);
     }
 

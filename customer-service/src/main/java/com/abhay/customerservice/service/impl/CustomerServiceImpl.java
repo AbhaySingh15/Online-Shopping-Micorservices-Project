@@ -1,8 +1,9 @@
-package com.abhay.customerservice.service;
+package com.abhay.customerservice.service.impl;
 
 import com.abhay.customerservice.CustomerServiceApplication;
 import com.abhay.customerservice.entity.Customer;
 import com.abhay.customerservice.repository.CustomerRepository;
+import com.abhay.customerservice.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

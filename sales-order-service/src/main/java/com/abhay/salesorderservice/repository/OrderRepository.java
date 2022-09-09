@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface OrderRepository extends JpaRepository<SalesOrder,Long> {
 
     @Query(value = "select * from sales_order where customer_sos_cust_id = :#{#cust_id}",nativeQuery = true)
-    SalesOrder findByCustomerId(@Param("cust_id") Long cust_id);
+    List<SalesOrder> findByCustomerId(@Param("cust_id") Long cust_id);
 
 }

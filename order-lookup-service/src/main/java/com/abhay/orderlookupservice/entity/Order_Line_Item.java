@@ -13,6 +13,7 @@ public class Order_Line_Item {
 
     private Long id;
     private String name;
+    @JsonIgnore
     private int item_quantity;
     @JsonIgnore
     private SalesOrder salesOrder;
