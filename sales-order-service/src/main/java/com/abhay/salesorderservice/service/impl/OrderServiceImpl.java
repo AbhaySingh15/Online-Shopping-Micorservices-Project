@@ -47,8 +47,6 @@ public class OrderServiceImpl implements OrderService {
         // if customer is registered & item array is not null or empty
         if(customer.isEmpty()) {
             log.info("order cannot be placed as customer is not registered");
-        } else if(CollectionUtils.isEmpty(orderRequestModel.getItem_names())) {
-            log.info("To place order item names cannot be empty or null");
         }else {
             // url to get the requested items from the item service
             StringBuilder getItemByNamesFromItemService = new StringBuilder("http://item-service/item?name=");
@@ -69,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
                 salesOrder.setCustomer_sos(customer.get());
                 log.info(salesOrder.toString());
                 orderRepository.save(salesOrder);
-                List<Order_Line_Item> order_line_itemList = getOrderLineItemList(itemArray, salesOrder);
+                List<Order_Line_Item> order_line_itemList = setOrderLineItemList(itemArray, salesOrder);
                 order_line_item_repository.saveAll(order_line_itemList);
                 SalesOrderResponseModel salesOrderResponseModel = modelMapper.map(salesOrder, SalesOrderResponseModel.class);
                 salesOrderResponseModel.setOrder_line_items(order_line_itemList);
@@ -97,7 +95,7 @@ public class OrderServiceImpl implements OrderService {
         return ResponseEntity.badRequest().build();
     }
 
-    public List<Order_Line_Item> getOrderLineItemList(Item[] items, SalesOrder salesOrder){
+    public List<Order_Line_Item> setOrderLineItemList(Item[] items, SalesOrder salesOrder){
         List<Order_Line_Item> order_line_itemList = new ArrayList<>();
         for(Item item: items) {
             Order_Line_Item order_line_item = new Order_Line_Item();

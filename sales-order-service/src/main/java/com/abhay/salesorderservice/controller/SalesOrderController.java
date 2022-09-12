@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -16,7 +17,7 @@ public class SalesOrderController {
     private OrderServiceImpl orderService;
 
     @PostMapping("/orders")
-    public ResponseEntity<SalesOrderResponseModel> createOrder(@RequestBody SalesOrderRequestModel orderRequestModel){
+    public ResponseEntity<SalesOrderResponseModel> createOrder(@RequestBody @Valid SalesOrderRequestModel orderRequestModel){
        return orderService.createOrder(orderRequestModel);
 
     }

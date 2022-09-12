@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -18,5 +18,6 @@ public class SalesOrderRequestModel {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate order_date;
     private Long cust_id;
+    @NotEmpty(message = "item list cannot be empty or null")
     private List<String> item_names;
 }
