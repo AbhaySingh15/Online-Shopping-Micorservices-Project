@@ -39,9 +39,9 @@ public class SalesOrderController {
         return orderService.updateOrder(orderId,salesOrderUpdateModel);
     }
 
-//    @DeleteMapping("/order/{orderId}")
-//    public ResponseEntity<?> deleteOrderByOrderId(@PathVariable Long orderId){
-//        return orderService.deleteOrderByOrderId(orderId);
-//    }
+    @DeleteMapping("/order/{orderId}")
+    public ResponseEntity<?> deleteOrderByOrderId(@PathVariable Long orderId){
+        return orderService.deleteOrderByOrderId(orderId);
+    }
 
 }

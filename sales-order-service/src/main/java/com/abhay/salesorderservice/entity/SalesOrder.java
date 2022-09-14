@@ -5,9 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.criterion.Order;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -23,8 +28,12 @@ public class SalesOrder {
     @JsonIgnore
     private double total_price;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JsonIgnore
     private CustomerSOS customer_sos;
+
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
+    private List<Order_Line_Item> order_line_itemList;
 
 }

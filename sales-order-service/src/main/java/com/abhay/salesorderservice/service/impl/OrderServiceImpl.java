@@ -116,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
             if (ArrayUtils.isNotEmpty(itemArray)) {
                 SalesOrder salesOrder = optionalSalesOrder.get();
                 salesOrder.setOrder_desc(salesOrderUpdateModel.getOrder_desc());
-                order_line_item_repository.deleteOrder_Line_ItemsByOrderId(orderId);
+                order_line_item_repository.deleteBySalesOrderId(orderId);
                 List<Order_Line_Item> order_line_itemList = setOrderLineItemList(itemArray, salesOrder);
                 log.info(order_line_itemList.toString());
                 orderRepository.save(salesOrder);
@@ -131,17 +131,18 @@ public class OrderServiceImpl implements OrderService {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("order cannot be updated as order id is invalid");
     }
 
-//    @Override
-//    public ResponseEntity<?> deleteOrderByOrderId(Long orderId) {
-//        Optional<SalesOrder> optionalSalesOrder = orderRepository.findById(orderId);
-//        if(optionalSalesOrder.isPresent()){
-//            SalesOrder salesOrder = optionalSalesOrder.get();
-//            orderRepository.deleteById(orderId);
-//            return ResponseEntity.status(HttpStatus.OK).body("order successfully deleted");
-//        }else{
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("order doesn't exist");
-//        }
-//    }
+    @Override
+    @Transactional
+    public ResponseEntity<?> deleteOrderByOrderId(Long orderId) {
+        Optional<SalesOrder> optionalSalesOrder = orderRepository.findById(orderId);
+        if(optionalSalesOrder.isPresent()){
+            order_line_item_repository.deleteBySalesOrderId(orderId);
+            orderRepository.deleteById(orderId);
+            return ResponseEntity.status(HttpStatus.OK).body("order successfully deleted");
+        }else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("order doesn't exist so it can't be deleted");
+        }
+    }
 
     public List<Order_Line_Item> setOrderLineItemList(Item[] items, SalesOrder salesOrder){
         List<Order_Line_Item> order_line_itemList = new ArrayList<>();

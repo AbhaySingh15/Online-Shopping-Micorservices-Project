@@ -15,5 +15,5 @@ public interface OrderService {
     ResponseEntity<?> getOrderDetailsByOrderId(Long order_id);
     ResponseEntity<?> updateOrder(Long orderId, SalesOrderUpdateModel salesOrderUpdateModel);
 
-//    ResponseEntity<?> deleteOrderByOrderId(Long orderId);
+    ResponseEntity<?> deleteOrderByOrderId(Long orderId);
 }
