@@ -18,6 +18,6 @@ public class SalesOrderRequestModel {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate order_date;
     private Long cust_id;
-    @NotEmpty(message = "item list cannot be empty or null")
+    @NotEmpty(message = "item list cannot be empty")
     private List<String> item_names;
 }

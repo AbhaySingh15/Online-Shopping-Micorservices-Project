@@ -10,7 +10,6 @@
         <option value="$PROJECT_DIR$/eureka-service-registry/pom.xml" />
         <option value="$PROJECT_DIR$/api-gateway/pom.xml" />
         <option value="$PROJECT_DIR$/order-lookup-service/pom.xml" />
-        <option value="$PROJECT_DIR$/hystrix-dashboard/pom.xml" />
         <option value="$PROJECT_DIR$/config-server/pom.xml" />
       </list>
     </option>

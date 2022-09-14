@@ -23,7 +23,7 @@ public class SalesOrder {
     @JsonIgnore
     private double total_price;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore
     private CustomerSOS customer_sos;
 

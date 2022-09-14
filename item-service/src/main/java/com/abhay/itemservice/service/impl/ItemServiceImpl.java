@@ -5,6 +5,7 @@ import com.abhay.itemservice.repository.ItemRepository;
 import com.abhay.itemservice.service.ItemService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,5 +35,10 @@ public class ItemServiceImpl implements ItemService {
             listOfItems.add(item);
         }
         return listOfItems;
+    }
+
+    @Override
+    public Item addItem(Item item) {
+        return itemRepo.save(item);
     }
 }

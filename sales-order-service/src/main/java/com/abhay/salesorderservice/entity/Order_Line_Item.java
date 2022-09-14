@@ -19,6 +19,7 @@ public class Order_Line_Item {
     private String name;
     @JsonIgnore
     private int item_quantity;
+
     @ManyToOne
     @JsonIgnore
     private SalesOrder salesOrder;

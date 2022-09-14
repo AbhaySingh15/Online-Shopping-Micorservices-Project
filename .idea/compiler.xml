@@ -12,7 +12,6 @@
         <module name="customer-service" />
         <module name="sales-order-service" />
         <module name="kafka-service" />
-        <module name="hystrix-dashboard" />
         <module name="item-service" />
         <module name="api-gateway" />
         <module name="order-lookup-service" />

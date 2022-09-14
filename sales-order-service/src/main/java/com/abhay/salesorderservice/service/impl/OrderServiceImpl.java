@@ -3,12 +3,14 @@ package com.abhay.salesorderservice.service.impl;
 import com.abhay.salesorderservice.entity.*;
 import com.abhay.salesorderservice.model.SalesOrderRequestModel;
 import com.abhay.salesorderservice.model.SalesOrderResponseModel;
+import com.abhay.salesorderservice.model.SalesOrderUpdateModel;
 import com.abhay.salesorderservice.repository.Customer_SOS_Repository;
 import com.abhay.salesorderservice.repository.OrderRepository;
 import com.abhay.salesorderservice.repository.Order_line_Item_Repository;
 import com.abhay.salesorderservice.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
+import org.hibernate.criterion.Order;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+import javax.swing.text.html.Option;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,25 +45,16 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public ResponseEntity<SalesOrderResponseModel> createOrder(SalesOrderRequestModel orderRequestModel) {
+    public ResponseEntity<?> createOrder(SalesOrderRequestModel orderRequestModel) {
         // getting cust_id from orderRequestModel object to check if customer is registered or not
         Optional<CustomerSOS> customer = customer_sos_repository.findById(orderRequestModel.getCust_id());
         // if customer is registered & item array is not null or empty
         if(customer.isEmpty()) {
-            log.info("order cannot be placed as customer is not registered");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("order cannot be placed as customer is not registered");
         }else {
-            // url to get the requested items from the item service
-            StringBuilder getItemByNamesFromItemService = new StringBuilder("http://item-service/item?name=");
-            String itemNamesRequestedByCustomer = String.join(",", orderRequestModel.getItem_names());
-            log.info(itemNamesRequestedByCustomer);
-            getItemByNamesFromItemService.append(itemNamesRequestedByCustomer);
-            log.info(getItemByNamesFromItemService.toString());
-            // getting the item array containing all items from item service
-            ResponseEntity<Item[]> responseEntity = restTemplate.getForEntity(getItemByNamesFromItemService.toString(), Item[].class);
-            Item[] itemArray = responseEntity.getBody();
-            log.info(Arrays.toString(itemArray));
+            Item[] itemArray = getItemsFromItemService(orderRequestModel.getItem_names());
             if (ArrayUtils.isEmpty(itemArray)) {
-                log.info("order cannot be placed as not a single item requested by customer is in the stock");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("order cannot be placed as not a single item requested by customer is in the stock");
             } else {
                 // mapping salesOrder object from salesOrderRequestModel object
                 SalesOrder salesOrder = modelMapper.map(orderRequestModel, SalesOrder.class);
@@ -74,17 +69,16 @@ public class OrderServiceImpl implements OrderService {
                 return ResponseEntity.ok(salesOrderResponseModel);
             }
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     @Override
-    public ResponseEntity<List<SalesOrder>> getOrderDetailsByCustomerId(Long cust_id) {
+    public ResponseEntity<?> getOrderDetailsByCustomerId(Long cust_id) {
         List<SalesOrder> salesOrder = orderRepository.findByCustomerId(cust_id);
         return ResponseEntity.ok(salesOrder);
     }
 
     @Override
-    public ResponseEntity<SalesOrderResponseModel> getOrderDetailsByOrderId(Long order_id) {
+    public ResponseEntity<?> getOrderDetailsByOrderId(Long order_id) {
         Optional<SalesOrder> salesOrderEntity = orderRepository.findById(order_id);
         if(salesOrderEntity.isPresent()){
             SalesOrder salesOrder = salesOrderEntity.get();
@@ -92,8 +86,62 @@ public class OrderServiceImpl implements OrderService {
             salesOrderResponseModel.setOrder_line_items(order_line_item_repository.getOrder_Line_ItemsByOrderId(order_id));
             return ResponseEntity.ok(salesOrderResponseModel);
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("no order found for given order id");
     }
+
+    public Item[] getItemsFromItemService(List<String> itemNameList) {
+        // url to get the requested items from the item service
+        StringBuilder getItemByNamesFromItemService = new StringBuilder("http://item-service/item?name=");
+        String itemNamesRequestedByCustomer = String.join(",", itemNameList);
+        log.info(itemNamesRequestedByCustomer);
+        getItemByNamesFromItemService.append(itemNamesRequestedByCustomer);
+        log.info(getItemByNamesFromItemService.toString());
+        // getting the item array containing all items from item service
+        ResponseEntity<Item[]> responseEntity = restTemplate.getForEntity(getItemByNamesFromItemService.toString(), Item[].class);
+        Item[] itemArray = responseEntity.getBody();
+        log.info(Arrays.toString(itemArray));
+        if (ArrayUtils.isEmpty(itemArray)) {
+            log.info("order cannot be placed as not a single item requested by customer is in the stock");
+            return null;
+        } else {
+            return itemArray;
+        }
+    }
+    @Override
+    @Transactional
+    public ResponseEntity<?> updateOrder(Long orderId, SalesOrderUpdateModel salesOrderUpdateModel) {
+        Optional<SalesOrder> optionalSalesOrder = orderRepository.findById(orderId);
+        if(optionalSalesOrder.isPresent()) {
+            Item[] itemArray = getItemsFromItemService(salesOrderUpdateModel.getItem_names());
+            if (ArrayUtils.isNotEmpty(itemArray)) {
+                SalesOrder salesOrder = optionalSalesOrder.get();
+                salesOrder.setOrder_desc(salesOrderUpdateModel.getOrder_desc());
+                order_line_item_repository.deleteOrder_Line_ItemsByOrderId(orderId);
+                List<Order_Line_Item> order_line_itemList = setOrderLineItemList(itemArray, salesOrder);
+                log.info(order_line_itemList.toString());
+                orderRepository.save(salesOrder);
+                order_line_item_repository.saveAll(order_line_itemList);
+                SalesOrderResponseModel salesOrderResponseModel = modelMapper.map(salesOrder, SalesOrderResponseModel.class);
+                salesOrderResponseModel.setOrder_line_items(order_line_itemList);
+                return ResponseEntity.ok(salesOrderResponseModel);
+            }else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("order cannot be updated as items requested are not available");
+            }
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("order cannot be updated as order id is invalid");
+    }
+
+//    @Override
+//    public ResponseEntity<?> deleteOrderByOrderId(Long orderId) {
+//        Optional<SalesOrder> optionalSalesOrder = orderRepository.findById(orderId);
+//        if(optionalSalesOrder.isPresent()){
+//            SalesOrder salesOrder = optionalSalesOrder.get();
+//            orderRepository.deleteById(orderId);
+//            return ResponseEntity.status(HttpStatus.OK).body("order successfully deleted");
+//        }else{
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("order doesn't exist");
+//        }
+//    }
 
     public List<Order_Line_Item> setOrderLineItemList(Item[] items, SalesOrder salesOrder){
         List<Order_Line_Item> order_line_itemList = new ArrayList<>();
@@ -117,6 +165,4 @@ public class OrderServiceImpl implements OrderService {
         salesOrderResponseModelTypeMap.addMapping(SalesOrder::getOrder_desc,SalesOrderResponseModel::setOrder_desc);
         salesOrderResponseModelTypeMap.addMapping(SalesOrder::getId,SalesOrderResponseModel::setId);
     }
-
-
 }
