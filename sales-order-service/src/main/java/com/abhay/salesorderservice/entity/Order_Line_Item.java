@@ -26,4 +26,9 @@ public class Order_Line_Item {
     @JsonIgnore
     private SalesOrder salesOrder;
 
+    public Order_Line_Item(String name, int item_quantity,SalesOrder salesOrder){
+        this.name = name;
+        this.item_quantity = item_quantity;
+        this.salesOrder = salesOrder;
+    }
 }
