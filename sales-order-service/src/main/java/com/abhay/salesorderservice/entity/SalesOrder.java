@@ -32,7 +32,7 @@ public class SalesOrder {
     @JsonIgnore
     private CustomerSOS customer_sos;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, mappedBy = "salesOrder")
     @JsonIgnore
     private List<Order_Line_Item> order_line_itemList;
 

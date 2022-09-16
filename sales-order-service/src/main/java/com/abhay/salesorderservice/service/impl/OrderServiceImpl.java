@@ -1,6 +1,9 @@
 package com.abhay.salesorderservice.service.impl;
 
-import com.abhay.salesorderservice.entity.*;
+import com.abhay.salesorderservice.entity.CustomerSOS;
+import com.abhay.salesorderservice.entity.Item;
+import com.abhay.salesorderservice.entity.Order_Line_Item;
+import com.abhay.salesorderservice.entity.SalesOrder;
 import com.abhay.salesorderservice.model.SalesOrderRequestModel;
 import com.abhay.salesorderservice.model.SalesOrderResponseModel;
 import com.abhay.salesorderservice.model.SalesOrderUpdateModel;
@@ -10,26 +13,24 @@ import com.abhay.salesorderservice.repository.Order_line_Item_Repository;
 import com.abhay.salesorderservice.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
-import org.hibernate.criterion.Order;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
-import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@Component
 @Slf4j
+@Component
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
@@ -136,7 +137,6 @@ public class OrderServiceImpl implements OrderService {
     public ResponseEntity<?> deleteOrderByOrderId(Long orderId) {
         Optional<SalesOrder> optionalSalesOrder = orderRepository.findById(orderId);
         if(optionalSalesOrder.isPresent()){
-            order_line_item_repository.deleteBySalesOrderId(orderId);
             orderRepository.deleteById(orderId);
             return ResponseEntity.status(HttpStatus.OK).body("order successfully deleted");
         }else{

@@ -13,6 +13,7 @@ import com.abhay.salesorderservice.repository.Order_line_Item_Repository;
 import com.abhay.salesorderservice.service.OrderService;
 import com.netflix.discovery.converters.Auto;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.ArrayUtils;
 import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
@@ -25,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
@@ -60,11 +62,6 @@ class SalesSalesOrderServiceApplicationTests {
         SalesOrder salesOrder = new SalesOrder();
         CustomerSOS customerSOS = new CustomerSOS();
 
-        customerSOS.setCust_email("test@email.com");
-        customerSOS.setCust_first_name("test firstname");
-        customerSOS.setCust_last_name("test lastname");
-        customer_sos_repository.save(customerSOS);
-
         salesOrder.setOrder_desc("this is a test order");
         salesOrder.setOrder_date(new Date());
         salesOrder.setCustomer_sos(customerSOS);
@@ -76,15 +73,42 @@ class SalesSalesOrderServiceApplicationTests {
         return salesOrder;
     }
 
+    private CustomerSOS getCustomerObject() {
+        CustomerSOS customerSOS = new CustomerSOS();
+        customerSOS.setCust_email("test@email.com");
+        customerSOS.setCust_first_name("test firstname");
+        customerSOS.setCust_last_name("test lastname");
+        return customerSOS;
+    }
+
     @Test
     @BeforeAll
     public void testCreateOrder(){
-       SalesOrder salesOrder = orderRepository.save(getSalesOrderObject());
-       List<Order_Line_Item> order_line_itemList = order_line_item_repository.saveAll(salesOrder.getOrder_line_itemList());
-       assertEquals("this is a test order",salesOrder.getOrder_desc());
-       assertEquals(salesOrder.getId(),order_line_itemList.get(0).getSalesOrder().getId());
-        log.info(salesOrder.getOrder_desc());
-        log.info(salesOrder.getId().toString());
+        CustomerSOS customerSOS = getCustomerObject();
+        SalesOrder salesOrder = getSalesOrderObject();
+        salesOrder.setCustomer_sos(customerSOS);
+        customer_sos_repository.save(customerSOS);
+
+       SalesOrder savedSalesOrder = orderRepository.save(salesOrder);
+       List<Order_Line_Item> order_line_itemList = order_line_item_repository.saveAll(savedSalesOrder.getOrder_line_itemList());
+       assertEquals("this is a test order",savedSalesOrder.getOrder_desc());
+       assertEquals(savedSalesOrder.getId(),order_line_itemList.get(0).getSalesOrder().getId());
+        log.info(savedSalesOrder.getOrder_desc());
+        log.info(savedSalesOrder.getId().toString());
+        log.info(savedSalesOrder.getCustomer_sos().getCust_id().toString());
+    }
+
+    @Test
+    public void getOrderDetailsByOrderIdTest(){
+        List<SalesOrder> salesOrder = orderRepository.findAll();
+        assertDoesNotThrow(()->orderRepository.findById(salesOrder.get(0).getId()).get());
+    }
+
+    @Test
+    public void getOrderDetailsByCustomerIdTest(){
+        List<SalesOrder> salesOrder = orderRepository.findAll();
+        List<SalesOrder> salesOrdersList = orderRepository.findByCustomerId(salesOrder.get(0).getCustomer_sos().getCust_id());
+        assertFalse(CollectionUtils.isEmpty(salesOrdersList));
     }
 
 
