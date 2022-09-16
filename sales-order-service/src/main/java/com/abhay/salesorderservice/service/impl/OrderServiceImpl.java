@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -111,25 +111,24 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public ResponseEntity<?> updateOrder(Long orderId, SalesOrderUpdateModel salesOrderUpdateModel) {
-        Optional<SalesOrder> optionalSalesOrder = orderRepository.findById(orderId);
-        if(optionalSalesOrder.isPresent()) {
-            Item[] itemArray = getItemsFromItemService(salesOrderUpdateModel.getItem_names());
-            if (ArrayUtils.isNotEmpty(itemArray)) {
-                SalesOrder salesOrder = optionalSalesOrder.get();
-                salesOrder.setOrder_desc(salesOrderUpdateModel.getOrder_desc());
-                order_line_item_repository.deleteBySalesOrderId(orderId);
-                List<Order_Line_Item> order_line_itemList = setOrderLineItemList(itemArray, salesOrder);
-                log.info(order_line_itemList.toString());
-                orderRepository.save(salesOrder);
-                order_line_item_repository.saveAll(order_line_itemList);
-                SalesOrderResponseModel salesOrderResponseModel = modelMapper.map(salesOrder, SalesOrderResponseModel.class);
-                salesOrderResponseModel.setOrder_line_items(order_line_itemList);
-                return ResponseEntity.ok(salesOrderResponseModel);
-            }else{
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("order cannot be updated as items requested are not available");
-            }
+        try {
+            SalesOrder salesOrder = orderRepository.getReferenceById(orderId);
+                Item[] itemArray = getItemsFromItemService(salesOrderUpdateModel.getItem_names());
+                if (ArrayUtils.isNotEmpty(itemArray)){
+                    salesOrder.setOrder_desc(salesOrderUpdateModel.getOrder_desc());
+                    order_line_item_repository.deleteBySalesOrderId(orderId);
+                    List<Order_Line_Item> order_line_itemList = setOrderLineItemList(itemArray, salesOrder);
+                    orderRepository.save(salesOrder);
+                    order_line_item_repository.saveAll(order_line_itemList);
+                    SalesOrderResponseModel salesOrderResponseModel = modelMapper.map(salesOrder, SalesOrderResponseModel.class);
+                    salesOrderResponseModel.setOrder_line_items(order_line_itemList);
+                    return ResponseEntity.ok(salesOrderResponseModel);
+                }else{
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("order cannot be updated as items requested are not available");
+                }
+        }catch (EntityNotFoundException exc){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("order cannot be updated as order id is invalid");
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("order cannot be updated as order id is invalid");
     }
 
     @Override
@@ -137,6 +136,8 @@ public class OrderServiceImpl implements OrderService {
     public ResponseEntity<?> deleteOrderByOrderId(Long orderId) {
         Optional<SalesOrder> optionalSalesOrder = orderRepository.findById(orderId);
         if(optionalSalesOrder.isPresent()){
+           // order line items will get automatically deleted
+            // because of cascade.remove operation
             orderRepository.deleteById(orderId);
             return ResponseEntity.status(HttpStatus.OK).body("order successfully deleted");
         }else{
