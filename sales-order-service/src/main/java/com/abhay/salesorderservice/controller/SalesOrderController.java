@@ -1,8 +1,6 @@
 package com.abhay.salesorderservice.controller;
 
-import com.abhay.salesorderservice.model.SalesOrderRequestModel;
-
-import com.abhay.salesorderservice.model.SalesOrderUpdateModel;
+import com.abhay.salesorderservice.model.SalesOrderDto;
 import com.abhay.salesorderservice.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,14 +17,13 @@ public class SalesOrderController {
     private OrderServiceImpl orderService;
 
     @PostMapping("/orders")
-    public ResponseEntity<?> createOrder(@RequestBody @Valid SalesOrderRequestModel orderRequestModel) {
-        return orderService.createOrder(orderRequestModel);
+    public ResponseEntity<?> createOrder(@RequestBody @Valid SalesOrderDto salesOrderDto) {
+        return orderService.createOrder(salesOrderDto);
     }
 
     @GetMapping("/orders")
     public ResponseEntity<?> getAllOrdersOfACustomer(@RequestParam("customerId") Long cust_id) {
-        ResponseEntity<?> responseEntity = orderService.getOrderDetailsByCustomerId(cust_id);
-        return responseEntity;
+        return orderService.getOrderDetailsByCustomerId(cust_id);
     }
 
     @GetMapping("/orders/{orderId}")
@@ -35,8 +32,8 @@ public class SalesOrderController {
     }
 
     @PutMapping("/order/{orderId}")
-    public ResponseEntity<?> updateOrder(@PathVariable Long orderId, @RequestBody SalesOrderUpdateModel salesOrderUpdateModel) {
-        return orderService.updateOrder(orderId,salesOrderUpdateModel);
+    public ResponseEntity<?> updateOrder(@PathVariable Long orderId, @RequestBody SalesOrderDto salesOrderDtoInput) {
+        return orderService.updateOrder(orderId,salesOrderDtoInput);
     }
 
     @DeleteMapping("/order/{orderId}")

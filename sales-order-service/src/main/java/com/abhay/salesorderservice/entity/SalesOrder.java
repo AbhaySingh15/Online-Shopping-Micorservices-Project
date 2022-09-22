@@ -24,11 +24,13 @@ public class SalesOrder {
     private double total_price;
 
     @ManyToOne
-    @JsonIgnore
     private CustomerSOS customer_sos;
 
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true, mappedBy = "salesOrder")
-    @JsonIgnore
     private List<Order_Line_Item> order_line_itemList;
 
+    public void setOrderLineItemList(List<Order_Line_Item> updatedOrderLineItemList){
+        this.order_line_itemList.clear();
+        this.order_line_itemList.addAll(updatedOrderLineItemList);
+    }
 }

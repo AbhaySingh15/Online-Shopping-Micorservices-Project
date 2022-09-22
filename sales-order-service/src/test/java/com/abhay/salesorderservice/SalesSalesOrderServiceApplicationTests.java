@@ -2,39 +2,26 @@ package com.abhay.salesorderservice;
 
 import com.abhay.salesorderservice.controller.SalesOrderController;
 import com.abhay.salesorderservice.entity.CustomerSOS;
-import com.abhay.salesorderservice.entity.Item;
 import com.abhay.salesorderservice.entity.Order_Line_Item;
 import com.abhay.salesorderservice.entity.SalesOrder;
-import com.abhay.salesorderservice.model.SalesOrderRequestModel;
-import com.abhay.salesorderservice.model.SalesOrderResponseModel;
 import com.abhay.salesorderservice.repository.Customer_SOS_Repository;
 import com.abhay.salesorderservice.repository.OrderRepository;
 import com.abhay.salesorderservice.repository.Order_line_Item_Repository;
-import com.abhay.salesorderservice.service.OrderService;
-import com.netflix.discovery.converters.Auto;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.ArrayUtils;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
-import javax.transaction.Transactional;
-import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static reactor.core.publisher.Mono.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
