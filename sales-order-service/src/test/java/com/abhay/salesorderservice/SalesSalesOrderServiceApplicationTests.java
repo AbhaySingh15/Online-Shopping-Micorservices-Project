@@ -7,6 +7,7 @@ import com.abhay.salesorderservice.entity.SalesOrder;
 import com.abhay.salesorderservice.repository.Customer_SOS_Repository;
 import com.abhay.salesorderservice.repository.OrderRepository;
 import com.abhay.salesorderservice.repository.Order_line_Item_Repository;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,8 +21,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
+
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -40,6 +41,7 @@ class SalesSalesOrderServiceApplicationTests {
     private Order_line_Item_Repository order_line_item_repository;
     @Autowired
     private Customer_SOS_Repository customer_sos_repository;
+
     @Test
     void contextLoads() {
     }
@@ -97,6 +99,7 @@ class SalesSalesOrderServiceApplicationTests {
         List<SalesOrder> salesOrdersList = orderRepository.findByCustomerId(salesOrder.get(0).getCustomer_sos().getCust_id());
         assertFalse(CollectionUtils.isEmpty(salesOrdersList));
     }
+
 
 
 }

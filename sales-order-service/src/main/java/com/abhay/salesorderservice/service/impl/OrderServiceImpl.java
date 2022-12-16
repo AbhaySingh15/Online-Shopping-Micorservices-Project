@@ -4,7 +4,7 @@ import com.abhay.salesorderservice.entity.CustomerSOS;
 import com.abhay.salesorderservice.entity.Item;
 import com.abhay.salesorderservice.entity.Order_Line_Item;
 import com.abhay.salesorderservice.entity.SalesOrder;
-import com.abhay.salesorderservice.model.SalesOrderDto;
+import com.abhay.salesorderservice.dto.SalesOrderDto;
 import com.abhay.salesorderservice.repository.Customer_SOS_Repository;
 import com.abhay.salesorderservice.repository.OrderRepository;
 import com.abhay.salesorderservice.repository.Order_line_Item_Repository;
@@ -15,7 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityNotFoundException;
@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Component
+@Service
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
@@ -40,7 +40,6 @@ public class OrderServiceImpl implements OrderService {
     private Customer_SOS_Repository customer_sos_repository;
     @Autowired
     private RestTemplate restTemplate;
-
 
     @Override
     public ResponseEntity<?> createOrder(SalesOrderDto salesOrderDtoInput) {

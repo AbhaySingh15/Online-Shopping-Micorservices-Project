@@ -1,4 +1,4 @@
-package com.abhay.salesorderservice.model;
+package com.abhay.salesorderservice.dto;
 
 import com.abhay.salesorderservice.entity.Order_Line_Item;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import org.springframework.hateoas.RepresentationModel;
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +16,8 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SalesOrderDto {
+public class SalesOrderDto extends RepresentationModel<SalesOrderDto> {
+
     private String order_desc;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date order_date;
@@ -24,4 +26,5 @@ public class SalesOrderDto {
     private List<String> item_names;
     private Long id;
     private List<Order_Line_Item> order_line_itemList;
+
 }

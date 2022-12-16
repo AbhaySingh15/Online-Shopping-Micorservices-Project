@@ -1,7 +1,7 @@
 package com.abhay.salesorderservice.controller;
 
-import com.abhay.salesorderservice.model.SalesOrderDto;
-import com.abhay.salesorderservice.service.impl.OrderServiceImpl;
+import com.abhay.salesorderservice.dto.SalesOrderDto;
+import com.abhay.salesorderservice.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
@@ -9,12 +9,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-
 @RestController
 public class SalesOrderController {
 
     @Autowired
-    private OrderServiceImpl orderService;
+    private OrderService orderService;
 
     @PostMapping("/orders")
     public ResponseEntity<?> createOrder(@RequestBody @Valid SalesOrderDto salesOrderDto) {
@@ -23,6 +22,11 @@ public class SalesOrderController {
 
     @GetMapping("/orders")
     public ResponseEntity<?> getAllOrdersOfACustomer(@RequestParam("customerId") Long cust_id) {
+//        ResponseEntity<?> allOrdersOfACustomer = getAllOrdersOfACustomer(cust_id);
+//        for(SalesOrderDto salesOrderDto: allOrdersOfACustomer){
+//            Link selfLink = linkTo(SalesOrderController.class).slash("/orders?").slash("customerId="+cust_id).withSelfRel();
+//            salesOrderDto.add(selfLink);
+//        }
         return orderService.getOrderDetailsByCustomerId(cust_id);
     }
 

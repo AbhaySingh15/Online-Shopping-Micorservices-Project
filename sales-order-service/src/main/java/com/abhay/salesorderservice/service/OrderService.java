@@ -1,6 +1,6 @@
 package com.abhay.salesorderservice.service;
 
-import com.abhay.salesorderservice.model.SalesOrderDto;
+import com.abhay.salesorderservice.dto.SalesOrderDto;
 import org.springframework.http.ResponseEntity;
 
 
