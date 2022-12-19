@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Slf4j
 class SalesSalesOrderServiceApplicationTests {
 
@@ -39,7 +38,7 @@ class SalesSalesOrderServiceApplicationTests {
     void contextLoads() {
     }
 
-    public SalesOrder getSalesOrderObject(){
+    private SalesOrder getSalesOrderObject(){
         //creating dummy sales order and setting its fields
         SalesOrder salesOrder = new SalesOrder();
         salesOrder.setOrder_desc("this is a test order");
@@ -63,36 +62,46 @@ class SalesSalesOrderServiceApplicationTests {
     }
 
     @Test
-    @BeforeAll
     public void testCreateOrder(){
+        SalesOrder savedSalesOrder = saveSalesOrderInTestDB();
+        //List<Order_Line_Item> order_line_itemList = order_line_item_repository.saveAll(salesOrder.getOrder_line_itemList());
+       List<Order_Line_Item> order_line_itemList = order_line_item_repository.findAll();
+        assertEquals("this is a test order",savedSalesOrder.getOrder_desc());
+       assertNotEquals(0,order_line_itemList.size());
+       orderRepository.delete(savedSalesOrder);
+    }
+
+    private SalesOrder saveSalesOrderInTestDB() {
         CustomerSOS customerSOS = getCustomerObject();
         SalesOrder salesOrder = getSalesOrderObject();
         salesOrder.setCustomer_sos(customerSOS);
         customer_sos_repository.save(customerSOS);
 
-       SalesOrder savedSalesOrder = orderRepository.save(salesOrder);
-       //List<Order_Line_Item> order_line_itemList = order_line_item_repository.saveAll(salesOrder.getOrder_line_itemList());
-       List<Order_Line_Item> order_line_itemList = order_line_item_repository.findAll();
-        assertEquals("this is a test order",savedSalesOrder.getOrder_desc());
-       assertNotEquals(0,order_line_itemList.size());
-        order_line_itemList.forEach(order_line_item -> System.out.println(order_line_item.getId()));
-
-        log.info(savedSalesOrder.getOrder_desc());
-        log.info(savedSalesOrder.getId().toString());
-        log.info(savedSalesOrder.getCustomer_sos().getCust_id().toString());
-        log.info(savedSalesOrder.getCustomer_sos().getCust_first_name());
+        SalesOrder savedSalesOrder = orderRepository.save(salesOrder);
+        return savedSalesOrder;
     }
 
-    @Test
-    public void getOrderDetailsByOrderIdTest(){
-        List<SalesOrder> salesOrder = orderRepository.findAll();
-        assertDoesNotThrow(()->orderRepository.findById(salesOrder.get(0).getId()).get());
-    }
+//    @Test
+//    public void getOrderDetailsByOrderIdTest(){
+//        SalesOrder savedSalesOrder = saveSalesOrderInTestDB();
+//        assertDoesNotThrow(()->orderRepository.findById(savedSalesOrder.getId()).get());
+//        orderRepository.delete(savedSalesOrder);
+//    }
 
     @Test
     public void getOrderDetailsByCustomerIdTest(){
-        List<SalesOrder> salesOrder = orderRepository.findAll();
-        List<SalesOrder> salesOrdersList = orderRepository.findByCustomerId(salesOrder.get(0).getCustomer_sos().getCust_id());
+        SalesOrder savedSalesOrder = saveSalesOrderInTestDB();
+        List<SalesOrder> salesOrdersList = orderRepository.findByCustomerId(savedSalesOrder.getCustomer_sos().getCust_id());
         assertFalse(CollectionUtils.isEmpty(salesOrdersList));
+        orderRepository.delete(savedSalesOrder);
     }
+
+//    @Test
+//    public void testDeleteOrderByOrderId(){
+//        SalesOrder savedSalesOrder = saveSalesOrderInTestDB();
+//        int allOrders = orderRepository.findAll().size();
+//        orderRepository.deleteById(orderRepository.findAll().get(0).getId());
+//        assertEquals(allOrders-1,orderRepository.findAll().size());
+//        orderRepository.delete(savedSalesOrder);
+//    }
 }
