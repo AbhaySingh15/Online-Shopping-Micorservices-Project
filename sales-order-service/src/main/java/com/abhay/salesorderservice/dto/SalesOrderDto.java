@@ -26,5 +26,5 @@ public class SalesOrderDto extends RepresentationModel<SalesOrderDto> {
     private List<String> item_names;
     private Long id;
     private List<Order_Line_Item> order_line_itemList;
-
+    private double total_price;
 }

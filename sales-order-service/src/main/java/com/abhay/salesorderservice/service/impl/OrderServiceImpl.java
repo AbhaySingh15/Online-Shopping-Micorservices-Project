@@ -53,10 +53,12 @@ public class OrderServiceImpl implements OrderService {
             if (ArrayUtils.isEmpty(itemArray)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("order cannot be placed as not a single item requested by customer is in the stock");
             } else {
+                double totalPriceOfOrder = getOrderPrice(itemArray);
                 // mapping salesOrder object from salesOrderRequestModel object
                 SalesOrder salesOrder = modelMapper.map(salesOrderDtoInput, SalesOrder.class);
                 // setting customer id for the order object
                 salesOrder.setCustomer_sos(customer.get());
+                salesOrder.setTotal_price(totalPriceOfOrder);
                 log.info(salesOrder.toString());
                 List<Order_Line_Item> order_line_itemList = setOrderLineItemList(itemArray, salesOrder);
                 salesOrder.setOrder_line_itemList(order_line_itemList);
@@ -65,6 +67,14 @@ public class OrderServiceImpl implements OrderService {
                 return ResponseEntity.ok(salesOrderDto);
             }
         }
+    }
+
+    private double getOrderPrice(Item[] itemArray){
+        double totalPriceOfOrder = 0;
+        for(Item item: itemArray){
+            totalPriceOfOrder+=item.getPrice();
+        }
+        return totalPriceOfOrder;
     }
 
     @Override
