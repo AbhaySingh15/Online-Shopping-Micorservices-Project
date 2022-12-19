@@ -1,6 +1,5 @@
 package com.abhay.salesorderservice;
 
-import com.abhay.salesorderservice.controller.SalesOrderController;
 import com.abhay.salesorderservice.entity.CustomerSOS;
 import com.abhay.salesorderservice.entity.Order_Line_Item;
 import com.abhay.salesorderservice.entity.SalesOrder;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,11 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class SalesSalesOrderServiceApplicationTests {
 
     @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
-    private SalesOrderController controller;
-
-    @Autowired
     private OrderRepository orderRepository;
     @Autowired
     private Order_line_Item_Repository order_line_item_repository;
@@ -47,26 +40,25 @@ class SalesSalesOrderServiceApplicationTests {
     }
 
     public SalesOrder getSalesOrderObject(){
-        // creating sales order and setting its fields
+        //creating dummy sales order and setting its fields
         SalesOrder salesOrder = new SalesOrder();
-        CustomerSOS customerSOS = new CustomerSOS();
-
         salesOrder.setOrder_desc("this is a test order");
         salesOrder.setOrder_date(new Date());
-        salesOrder.setCustomer_sos(customerSOS);
 
         List<Order_Line_Item> order_line_itemList = new ArrayList<>();
-        order_line_itemList.add(new Order_Line_Item("laptop",2,salesOrder));
-        order_line_itemList.add(new Order_Line_Item("monitor",1,salesOrder));
+        order_line_itemList.add(new Order_Line_Item("laptop",1, salesOrder));
+        order_line_itemList.add(new Order_Line_Item("monitor",1, salesOrder));
         salesOrder.setOrder_line_itemList(order_line_itemList);
         return salesOrder;
     }
 
+
     private CustomerSOS getCustomerObject() {
+        //creating dummy customer
         CustomerSOS customerSOS = new CustomerSOS();
-        customerSOS.setCust_email("test@email.com");
-        customerSOS.setCust_first_name("test firstname");
-        customerSOS.setCust_last_name("test lastname");
+        customerSOS.setCust_email("dummy@email.com");
+        customerSOS.setCust_first_name("dummy firstname");
+        customerSOS.setCust_last_name("dummy lastname");
         return customerSOS;
     }
 
@@ -79,12 +71,16 @@ class SalesSalesOrderServiceApplicationTests {
         customer_sos_repository.save(customerSOS);
 
        SalesOrder savedSalesOrder = orderRepository.save(salesOrder);
-       List<Order_Line_Item> order_line_itemList = order_line_item_repository.saveAll(savedSalesOrder.getOrder_line_itemList());
-       assertEquals("this is a test order",savedSalesOrder.getOrder_desc());
-       assertEquals(savedSalesOrder.getId(),order_line_itemList.get(0).getSalesOrder().getId());
+       //List<Order_Line_Item> order_line_itemList = order_line_item_repository.saveAll(salesOrder.getOrder_line_itemList());
+       List<Order_Line_Item> order_line_itemList = order_line_item_repository.findAll();
+        assertEquals("this is a test order",savedSalesOrder.getOrder_desc());
+       assertNotEquals(0,order_line_itemList.size());
+        order_line_itemList.forEach(order_line_item -> System.out.println(order_line_item.getId()));
+
         log.info(savedSalesOrder.getOrder_desc());
         log.info(savedSalesOrder.getId().toString());
         log.info(savedSalesOrder.getCustomer_sos().getCust_id().toString());
+        log.info(savedSalesOrder.getCustomer_sos().getCust_first_name());
     }
 
     @Test
@@ -99,7 +95,4 @@ class SalesSalesOrderServiceApplicationTests {
         List<SalesOrder> salesOrdersList = orderRepository.findByCustomerId(salesOrder.get(0).getCustomer_sos().getCust_id());
         assertFalse(CollectionUtils.isEmpty(salesOrdersList));
     }
-
-
-
 }

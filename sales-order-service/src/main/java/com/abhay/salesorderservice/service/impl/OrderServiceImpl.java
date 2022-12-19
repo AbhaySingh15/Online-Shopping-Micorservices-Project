@@ -61,7 +61,6 @@ public class OrderServiceImpl implements OrderService {
                 List<Order_Line_Item> order_line_itemList = setOrderLineItemList(itemArray, salesOrder);
                 salesOrder.setOrder_line_itemList(order_line_itemList);
                 orderRepository.save(salesOrder);
-                order_line_item_repository.saveAll(order_line_itemList);
                 SalesOrderDto salesOrderDto = modelMapper.map(salesOrder, SalesOrderDto.class);
                 return ResponseEntity.ok(salesOrderDto);
             }
